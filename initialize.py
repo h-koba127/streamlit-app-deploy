@@ -25,11 +25,9 @@ import constants as ct
 # 設定関連
 ############################################################
 # 「.env」ファイルで定義した環境変数の読み込み
-if "OPENAI_API_KEY" in st.secrets:
-    OPENAI_API_KEY = st.secrets["OPENAI_API_KEY"]
-else:
-    load_dotenv()
-    #OPENAI_API_KEY=os.environ.get("OPENAI_API_KEY")
+load_dotenv()
+
+
 ############################################################
 # 関数定義
 ############################################################
@@ -137,7 +135,7 @@ def initialize_retriever():
     db = Chroma.from_documents(splitted_docs, embedding=embeddings)
 
     # ベクターストアを検索するRetrieverの作成
-    st.session_state.retriever = db.as_retriever(search_kwargs={"k": ct.DOCUMENT_COUNT})
+    st.session_state.retriever = db.as_retriever(search_kwargs={"k": ct.RETRIEVER_K})
 
 
 def initialize_session_state():
@@ -219,16 +217,7 @@ def file_load(path, docs_all):
         # ファイルの拡張子に合ったdata loaderを使ってデータ読み込み
         loader = ct.SUPPORTED_EXTENSIONS[file_extension](path)
         docs = loader.load()
-
-        if file_extension == ".csv" and len(docs) > 0:
-            # 各行のドキュメントを1つのテキストに統合
-            merged_text = "\n".join([doc.page_content for doc in docs])
-            # メタデータは最初のものを流用（必要に応じて調整）
-            merged_doc = docs[0]
-            merged_doc.page_content = merged_text
-            docs_all.append(merged_doc)
-        else:
-            docs_all.extend(docs)
+        docs_all.extend(docs)
 
 
 def adjust_string(s):

@@ -20,10 +20,8 @@ import constants as ct
 # 設定関連
 ############################################################
 # 「.env」ファイルで定義した環境変数の読み込み
-if "OPENAI_API_KEY" in st.secrets:
-    OPENAI_API_KEY = st.secrets["OPENAI_API_KEY"]
-else:
-    load_dotenv()
+load_dotenv()
+
 
 ############################################################
 # 関数定義
